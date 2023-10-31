@@ -1,10 +1,9 @@
 package com.example.condosa_registrar_recaudacionbackend.controller;
 
 import com.example.condosa_registrar_recaudacionbackend.controller.dto.RecaudacionDto;
-import com.example.condosa_registrar_recaudacionbackend.model.Recaudacion;
-import com.example.condosa_registrar_recaudacionbackend.repository.RecaudacionRepository;
+import com.example.condosa_registrar_recaudacionbackend.model.*;
+import com.example.condosa_registrar_recaudacionbackend.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.text.SimpleDateFormat;
@@ -22,13 +21,17 @@ public class RecaudacionController {
     @GetMapping()
     public List<RecaudacionDto> obtenerRecaudaciones() {
         List<Recaudacion> recaudaciones = recaudacionRepository.findAll();
+
+        // Invertir la lista
+        Collections.reverse(recaudaciones);
+
         return recaudaciones.stream()
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());
     }
-    
-    @PostMapping()
-    public Recaudacion guardarRecaudacion(@RequestBody Recaudacion recaudacion) {
+
+    @PostMapping("/guardar")
+    public Recaudacion guardarRecaudacion2(@RequestBody Recaudacion recaudacion) {
         return recaudacionRepository.save(recaudacion);
     }
 
@@ -56,5 +59,7 @@ public class RecaudacionController {
 
         return recaudacionDTO;
     }
+
+
 
 }

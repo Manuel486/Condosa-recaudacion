@@ -6,4 +6,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface MantenimientoReciboRepository extends JpaRepository<MantenimientoRecibo,Integer> {
 
     MantenimientoRecibo findMantenimientoReciboByRecibo(String recibo);
+    
 }

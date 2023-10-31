@@ -9,4 +9,5 @@ import org.springframework.stereotype.Repository;
 public interface CuentaRepository extends JpaRepository<Cuenta,Integer> {
 
     Cuenta findByPersona_Documento(String documento);
+
 }
