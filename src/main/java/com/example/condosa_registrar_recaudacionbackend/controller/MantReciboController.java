@@ -1,8 +1,13 @@
 package com.example.condosa_registrar_recaudacionbackend.controller;
 
 import com.example.condosa_registrar_recaudacionbackend.controller.dto.MantenimientoReciboDto;
+import com.example.condosa_registrar_recaudacionbackend.controller.dto.MntReciboRecaudacionDto;
+import com.example.condosa_registrar_recaudacionbackend.model.Cuenta;
+import com.example.condosa_registrar_recaudacionbackend.model.CuentaPredio;
 import com.example.condosa_registrar_recaudacionbackend.model.MantenimientoRecibo;
 import com.example.condosa_registrar_recaudacionbackend.model.Recaudacion;
+import com.example.condosa_registrar_recaudacionbackend.repository.CuentaPredioRepository;
+import com.example.condosa_registrar_recaudacionbackend.repository.CuentaRepository;
 import com.example.condosa_registrar_recaudacionbackend.repository.MantenimientoReciboRepository;
 import com.example.condosa_registrar_recaudacionbackend.repository.RecaudacionRepository;
 import org.apache.coyote.Response;
@@ -20,6 +25,12 @@ public class MantReciboController {
 
     @Autowired
     private RecaudacionRepository recaudacionRepository;
+
+    @Autowired
+    private CuentaRepository cuentaRepository;
+
+    @Autowired
+    private CuentaPredioRepository cuentaPredioRepository;
 
     @GetMapping("/nro_recibo/{recibo}")
     public ResponseEntity<MantenimientoReciboDto> getMantReciboByRecibo(@PathVariable("recibo") String recibo ){
@@ -39,4 +50,46 @@ public class MantReciboController {
 
         return ResponseEntity.ok(mantenimientoReciboDto);
     }
+
+    @GetMapping("/nro_recibo/recaudacion/{recibo}")
+    public ResponseEntity<MntReciboRecaudacionDto> getRecaudacion(@PathVariable("recibo") String recibo){
+        MantenimientoRecibo mantenimientoRecibo = mantenimientoReciboRepository.findMantenimientoReciboByRecibo(recibo);
+
+        if (mantenimientoRecibo == null){
+            // El recibo no se encontró, devuelve un estado 404 Not Found
+            return ResponseEntity.notFound() .build();
+        }
+
+        MntReciboRecaudacionDto mntReciboRecaudacionDto = new MntReciboRecaudacionDto();
+        String nroDocumento = mantenimientoRecibo.getCasa().getPredio().getPersona().getDocumento();
+        Cuenta cuenta = cuentaRepository.findByPersona_Documento(nroDocumento);
+        String ruc = mantenimientoRecibo.getCasa().getPredio().getRuc();
+        CuentaPredio cuentaPredio = cuentaPredioRepository.findByPredio_Ruc(ruc);
+
+        // Cuenta
+        mntReciboRecaudacionDto.setIdCuenta(cuenta.getIdCuenta());
+        mntReciboRecaudacionDto.setNombreCuenta(cuenta.getPersona().getNombres());
+        mntReciboRecaudacionDto.setBanco(cuenta.getBanco().getDescripcion());
+        mntReciboRecaudacionDto.setIdTipoMoneda(cuenta.getTipoMoneda().getIdTipoMoneda());
+        mntReciboRecaudacionDto.setMoneda(cuenta.getTipoMoneda().getDescripcion());
+        mntReciboRecaudacionDto.setNroCuenta(cuenta.getNCuenta());
+
+        // CuentaPredio
+        mntReciboRecaudacionDto.setIdCuentaPredio(cuentaPredio.getIdCuentaPredio());
+        mntReciboRecaudacionDto.setNombrePredio(cuentaPredio.getPredio().getDescripcion());
+        mntReciboRecaudacionDto.setDirrecion(cuentaPredio.getPredio().getDireccion());
+        mntReciboRecaudacionDto.setTipoDePredio(cuentaPredio.getPredio().getTipoPredio().getNombrePredio());
+        mntReciboRecaudacionDto.setNrCuentaPredio(cuentaPredio.getNCuenta());
+        mntReciboRecaudacionDto.setTipoAutorizacion(cuentaPredio.getTipoAutorizacion().getDescripcion());
+        mntReciboRecaudacionDto.setEstado(cuentaPredio.getEstado().getDescripcion());
+
+        // Mantenimiento del recibo
+        mntReciboRecaudacionDto.setIdMantRecibo(mantenimientoRecibo.getIdMantenimientoRecibo());
+        mntReciboRecaudacionDto.setEstadoRecibo(mantenimientoRecibo.getReciboEstado().getDescripcion());
+        mntReciboRecaudacionDto.setImporte(mantenimientoRecibo.getImporte());
+
+        return ResponseEntity.ok(mntReciboRecaudacionDto);
+    }
+
+
 }
