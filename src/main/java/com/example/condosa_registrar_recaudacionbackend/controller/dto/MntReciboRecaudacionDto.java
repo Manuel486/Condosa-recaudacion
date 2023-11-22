@@ -21,6 +21,8 @@ public class MntReciboRecaudacionDto {
     private short idTipoMoneda;
     private String moneda;
     private BigInteger nroCuenta;
+    private String nombre;
+    private Integer idPersona;
 
     // CuentaPredio
     private Short idCuentaPredio;

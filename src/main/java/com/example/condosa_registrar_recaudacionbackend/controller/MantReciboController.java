@@ -15,6 +15,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigInteger;
+
 @RestController
 @RequestMapping("/api/v1/mant_recibo")
 @CrossOrigin("*")
@@ -33,13 +35,13 @@ public class MantReciboController {
     private CuentaPredioRepository cuentaPredioRepository;
 
     @GetMapping("/nro_recibo/{recibo}")
-    public ResponseEntity<MantenimientoReciboDto> getMantReciboByRecibo(@PathVariable("recibo") String recibo ){
+    public ResponseEntity<MantenimientoReciboDto> getMantReciboByRecibo(@PathVariable("recibo") String recibo) {
         MantenimientoRecibo mantenimientoRecibo = mantenimientoReciboRepository.findMantenimientoReciboByRecibo(recibo);
 //        MantenimientoRecibo mantenimientoRecibo = recaudacionRepository.findMantReciboByRecibo(recibo);
 
         if (mantenimientoRecibo == null) {
             // El recibo no se encontró, devuelve un estado 404 Not Found
-            return ResponseEntity.notFound() .build();
+            return ResponseEntity.notFound().build();
         }
 
         MantenimientoReciboDto mantenimientoReciboDto = new MantenimientoReciboDto();
@@ -52,27 +54,39 @@ public class MantReciboController {
     }
 
     @GetMapping("/nro_recibo/recaudacion/{recibo}")
-    public ResponseEntity<MntReciboRecaudacionDto> getRecaudacion(@PathVariable("recibo") String recibo){
+    public ResponseEntity<MntReciboRecaudacionDto> getRecaudacion(@PathVariable("recibo") String recibo) {
         MantenimientoRecibo mantenimientoRecibo = mantenimientoReciboRepository.findMantenimientoReciboByRecibo(recibo);
 
-        if (mantenimientoRecibo == null){
+        if (mantenimientoRecibo == null) {
             // El recibo no se encontró, devuelve un estado 404 Not Found
-            return ResponseEntity.notFound() .build();
+            return ResponseEntity.notFound().build();
         }
 
         MntReciboRecaudacionDto mntReciboRecaudacionDto = new MntReciboRecaudacionDto();
-        String nroDocumento = mantenimientoRecibo.getCasa().getPredio().getPersona().getDocumento();
-        Cuenta cuenta = cuentaRepository.findByPersona_Documento(nroDocumento);
         String ruc = mantenimientoRecibo.getCasa().getPredio().getRuc();
         CuentaPredio cuentaPredio = cuentaPredioRepository.findByPredio_Ruc(ruc);
+        String nroDocumento = mantenimientoRecibo.getCasa().getPredio().getPersona().getDocumento();
+        Cuenta cuenta = cuentaRepository.findByPersona_Documento(nroDocumento);
 
-        // Cuenta
-        mntReciboRecaudacionDto.setIdCuenta(cuenta.getIdCuenta());
-        mntReciboRecaudacionDto.setNombreCuenta(cuenta.getPersona().getNombres());
-        mntReciboRecaudacionDto.setBanco(cuenta.getBanco().getDescripcion());
-        mntReciboRecaudacionDto.setIdTipoMoneda(cuenta.getTipoMoneda().getIdTipoMoneda());
-        mntReciboRecaudacionDto.setMoneda(cuenta.getTipoMoneda().getDescripcion());
-        mntReciboRecaudacionDto.setNroCuenta(cuenta.getNCuenta());
+        if (cuenta != null) {
+            mntReciboRecaudacionDto.setIdCuenta(cuenta.getIdCuenta());
+            mntReciboRecaudacionDto.setNombreCuenta(cuenta.getPersona().getNombres());
+            mntReciboRecaudacionDto.setBanco(cuenta.getBanco().getDescripcion());
+            mntReciboRecaudacionDto.setIdTipoMoneda(cuenta.getTipoMoneda().getIdTipoMoneda());
+            mntReciboRecaudacionDto.setMoneda(cuenta.getTipoMoneda().getDescripcion());
+            mntReciboRecaudacionDto.setNroCuenta(cuenta.getNCuenta());
+
+        } else {
+            mntReciboRecaudacionDto.setIdCuenta(null);
+            mntReciboRecaudacionDto.setNombreCuenta(null);
+            mntReciboRecaudacionDto.setBanco(null);
+            mntReciboRecaudacionDto.setIdTipoMoneda((short) 0);
+            mntReciboRecaudacionDto.setMoneda(null);
+            mntReciboRecaudacionDto.setNroCuenta(null);
+        }
+
+        mntReciboRecaudacionDto.setNombre(mantenimientoRecibo.getCasa().getPredio().getPersona().getNombres() + " " + mantenimientoRecibo.getCasa().getPredio().getPersona().getApellidoPaterno() + " " + mantenimientoRecibo.getCasa().getPredio().getPersona().getApellidoMaterno());
+        mntReciboRecaudacionDto.setIdPersona(mantenimientoRecibo.getCasa().getPredio().getPersona().getIdPersona());
 
         // CuentaPredio
         mntReciboRecaudacionDto.setIdCuentaPredio(cuentaPredio.getIdCuentaPredio());

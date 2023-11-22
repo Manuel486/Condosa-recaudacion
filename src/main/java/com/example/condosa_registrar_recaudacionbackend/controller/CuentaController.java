@@ -16,8 +16,10 @@ public class CuentaController {
     @Autowired
     private CuentaRepository cuentaRepository;
 
-//    @Autowired
-//    private RecaudacionRepository recaudacionRepository;
+    @PostMapping()
+    public Cuenta guardarCuenta(@RequestBody Cuenta cuenta){
+        return cuentaRepository.save(cuenta);
+    }
 
     @GetMapping("/persona_nroDocumento/{nroDocumento}")
     public ResponseEntity<CuentaDto> getCuentaById(@PathVariable("nroDocumento") String nroDocumento){

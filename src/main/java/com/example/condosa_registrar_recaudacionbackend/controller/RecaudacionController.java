@@ -24,6 +24,7 @@ public class RecaudacionController {
 
         // Invertir la lista
         Collections.reverse(recaudaciones);
+        System.out.println(recaudaciones.toString());
 
         return recaudaciones.stream()
                 .map(this::convertToDTO)
