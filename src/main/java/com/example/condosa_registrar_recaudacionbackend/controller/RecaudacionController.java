@@ -22,8 +22,12 @@ public class RecaudacionController {
     public List<RecaudacionDto> obtenerRecaudaciones() {
         List<Recaudacion> recaudaciones = recaudacionRepository.findAll();
 
-        // Invertir la lista
-        Collections.reverse(recaudaciones);
+        // Ordenar la lista por idRecaudacion de mayor a menor
+        recaudaciones.sort(Comparator.comparing(Recaudacion::getIdRecaudacion).reversed());
+
+        // Alternativamente, puedes usar Collections.sort para ordenarla de la siguiente manera:
+        // Collections.sort(recaudaciones, Comparator.comparing(Recaudacion::getIdRecaudacion).reversed());
+
         System.out.println(recaudaciones.toString());
 
         return recaudaciones.stream()
