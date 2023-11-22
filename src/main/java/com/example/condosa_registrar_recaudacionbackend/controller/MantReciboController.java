@@ -77,12 +77,12 @@ public class MantReciboController {
             mntReciboRecaudacionDto.setNroCuenta(cuenta.getNCuenta());
 
         } else {
-            mntReciboRecaudacionDto.setIdCuenta(null);
-            mntReciboRecaudacionDto.setNombreCuenta(null);
-            mntReciboRecaudacionDto.setBanco(null);
+            mntReciboRecaudacionDto.setIdCuenta(0);
+            mntReciboRecaudacionDto.setNombreCuenta("");
+            mntReciboRecaudacionDto.setBanco("");
             mntReciboRecaudacionDto.setIdTipoMoneda((short) 0);
-            mntReciboRecaudacionDto.setMoneda(null);
-            mntReciboRecaudacionDto.setNroCuenta(null);
+            mntReciboRecaudacionDto.setMoneda("");
+            mntReciboRecaudacionDto.setNroCuenta(BigInteger.valueOf(0));
         }
 
         mntReciboRecaudacionDto.setNombre(mantenimientoRecibo.getCasa().getPredio().getPersona().getNombres() + " " + mantenimientoRecibo.getCasa().getPredio().getPersona().getApellidoPaterno() + " " + mantenimientoRecibo.getCasa().getPredio().getPersona().getApellidoMaterno());
