@@ -36,7 +36,7 @@ public class CuentaController {
         cuentaDto.setNombre(cuenta.getPersona().getNombres());
         cuentaDto.setBanco(cuenta.getBanco().getDescripcion());
         cuentaDto.setMoneda(cuenta.getTipoMoneda().getDescripcion());
-        cuentaDto.setNroCuenta(cuenta.getNCuenta());
+        cuentaDto.setNCuenta(cuenta.getNCuenta());
         return ResponseEntity.ok(cuentaDto);
     }
 }
