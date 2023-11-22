@@ -15,7 +15,7 @@ public class CuentaDto {
     private String nombre;
     private String banco;
     private String moneda;
-    private BigInteger nroCuenta;
+    private BigInteger nCuenta;
 
     public CuentaDto(){}
 }
